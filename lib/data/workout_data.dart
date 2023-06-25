@@ -96,6 +96,7 @@ class WorkoutData extends ChangeNotifier {
 
     // check off boolean to show user compled the exercise
     relevantExercise.isCompleted = !relevantExercise.isCompleted;
+    print('tapped');
     
     notifyListeners();
     
