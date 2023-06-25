@@ -84,38 +84,29 @@ class _HomePageState extends State<HomePage> {
     newWorkoutNameController.clear();
   }
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return Consumer<WorkoutData>(
       builder: (context, value, child) => Scaffold(
         backgroundColor: Colors.grey[400],
-          appBar: AppBar(
-            title: const Text("Workout tracker"),
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: createNewWorkout,
-            child: const Icon(Icons.add),
-          ),
-          body: ListView(
-            children: [
-              // HEAT MAP
-              MyHeatMap(
-                  datasets: value.heatMapDataSet, startDateDDMMYYYY: value.getStartDate()),
-
-              // WORKOUTLIST
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: value.getWorkoutlist().length,
-                itemBuilder: (context, index) => ListTile(
-                  title: Text(value.getWorkoutlist()[index].name),
-                  trailing: IconButton(
-                    icon: Icon(Icons.arrow_forward_ios),
-                    onPressed: () =>
-                        goToWorkoutPage(value.getWorkoutlist()[index].name),
-                ),
-             ),
+        appBar: AppBar(
+          title: const Text("Workout tracker"),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: createNewWorkout,
+          child: const Icon(Icons.add),
+        ),
+        body: ListView.builder(
+          itemCount: value.getWorkoutlist().length,
+          itemBuilder: (context, index) => ListTile(
+            title: Text(value.getWorkoutlist()[index].name),
+            trailing: IconButton(
+              icon: Icon(Icons.arrow_forward_ios),
+              onPressed: () => 
+              goToWorkoutPage(value.getWorkoutlist()[index].name),
             ),
+          ),
+        ),
           ],
         )
       ),
