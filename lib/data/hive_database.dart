@@ -32,8 +32,10 @@ class HiveDatabase {
     final exerciseList = convertObjectToExerciseList(workouts);
 
     /*
+    
     check if any of the exercises has been done
     we will put a 0 or 1 for each ddmmyyyy date
+
     */
 
     if (exerciseCompleted(workouts)) {

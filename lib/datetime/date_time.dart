@@ -45,7 +45,7 @@ String convertDateTimeToDDMMYYYY(DateTime dateTime) {
   // month in the format mm
   String month = dateTime.month.toString();
    if (month.length == 1){
-    month = '0$day';
+    month = '0$month';
   }
 
   // year in the format yyy
