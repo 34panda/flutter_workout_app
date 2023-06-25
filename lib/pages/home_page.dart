@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:workout_app/components/heat_map.dart';
 import 'package:workout_app/data/workout_data.dart';
 
 import 'workout_page.dart';
@@ -88,7 +87,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Consumer<WorkoutData>(
       builder: (context, value, child) => Scaffold(
-        backgroundColor: Colors.grey[400],
         appBar: AppBar(
           title: const Text("Workout tracker"),
         ),
@@ -107,8 +105,6 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-          ],
-        )
       ),
     );
   }
