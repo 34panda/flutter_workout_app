@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_app/components/heat_map.dart';
 import 'package:workout_app/data/workout_data.dart';
 
 import 'workout_page.dart';
@@ -12,11 +13,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   @override
   void initState() {
     super.initState();
-
 
     Provider.of<WorkoutData>(context, listen: false).initializeWorkoutList();
   }
@@ -49,7 +48,7 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-  
+
   // go to workout page
   void goToWorkoutPage(String workoutName) {
     Navigator.push(
@@ -84,29 +83,40 @@ class _HomePageState extends State<HomePage> {
   void clear() {
     newWorkoutNameController.clear();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Consumer<WorkoutData>(
       builder: (context, value, child) => Scaffold(
-        appBar: AppBar(
-          title: const Text("Workout tracker"),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: createNewWorkout,
-          child: const Icon(Icons.add),
-        ),
-        body: ListView.builder(
-          itemCount: value.getWorkoutlist().length,
-          itemBuilder: (context, index) => ListTile(
-            title: Text(value.getWorkoutlist()[index].name),
-            trailing: IconButton(
-              icon: Icon(Icons.arrow_forward_ios),
-              onPressed: () => 
-              goToWorkoutPage(value.getWorkoutlist()[index].name),
-            ),
+          appBar: AppBar(
+            title: const Text("Workout tracker"),
           ),
-        ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: createNewWorkout,
+            child: const Icon(Icons.add),
+          ),
+          body: ListView(
+            children: [
+              // HEAT MAP
+              MyHeatMap(
+                  datasets: value.heatMapDataSet, startDateDDMMYYYY: value.getStartDate()),
+
+              // WORKOUTLIST
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: value.getWorkoutlist().length,
+                itemBuilder: (context, index) => ListTile(
+                  title: Text(value.getWorkoutlist()[index].name),
+                  trailing: IconButton(
+                    icon: Icon(Icons.arrow_forward_ios),
+                    onPressed: () =>
+                        goToWorkoutPage(value.getWorkoutlist()[index].name),
+                ),
+             ),
+            ),
+          ],
+        )
       ),
     );
   }

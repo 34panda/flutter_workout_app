@@ -32,6 +32,9 @@ class WorkoutData extends ChangeNotifier {
     } else {
       db.saveToDatabase(workoutList);
     }
+
+    // load the heat map
+    loadHeatMap();
   }
 
   // get list of workouts
@@ -91,6 +94,9 @@ class WorkoutData extends ChangeNotifier {
 
     // save to database
     db.saveToDatabase(workoutList);
+    
+    // load the heat map
+    loadHeatMap();
   }
 
   // return a relevant workout object, given a workout name
