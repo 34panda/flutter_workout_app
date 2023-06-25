@@ -6,7 +6,7 @@ import '../models/workout.dart';
 
 class HiveDatabase {
   // reference our hivebox
-  final _myBox = Hive.box("workout_database1");
+  final _myBox = Hive.box("workout_database");
 
   // check if there is already data stored, if not, record the start date
   bool previousDateExists() {
@@ -55,7 +55,7 @@ class HiveDatabase {
     final exerciseDetails = _myBox.get("EXERCISES");
 
     // create workout objects
-    for (int i =0; i < workoutNames.length; i++) {
+    for (int i = 0; i < workoutNames.length; i++) {
       // each workout can have multiple exercises
       List<Exercise> exercisesInEachWorkout = [];
 
@@ -67,7 +67,7 @@ class HiveDatabase {
             weight: exerciseDetails[i][j][1], 
             reps: exerciseDetails[i][j][2], 
             sets: exerciseDetails[i][j][3],
-            isCompleted: exerciseDetails[i][j][4] == "true " ? true : false,
+            isCompleted: exerciseDetails[i][j][4] == "true" ? true : false,
           ),
         );
       }
@@ -105,10 +105,10 @@ class HiveDatabase {
   }
 }
 
-// converts workout object into a list, because hive takes onmy primitive parameters like str and int
+// converts workout object into a list, because hive takes only primitive parameters like str and int
 List<String> convertObjectToWorkoutList(List<Workout> workouts) {
   List<String> workoutList = [
-    //eg. [ Push, Pull ]
+    //e.g. [ Push, Pull ]
   ];
 
   for (int i = 0; i < workouts.length; i++) {

@@ -10,19 +10,19 @@ void main() async {
   await Hive.initFlutter();
 
   // open a hive box
-  await Hive.openBox("workout_database1");
+  await Hive.openBox("workout_database");
 
-  runApp(const MainApp());
+  runApp(const MyApp());
 }
 
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => WorkoutData(),
-      child: MaterialApp(
+      child: const MaterialApp(
         debugShowCheckedModeBanner: false,
         home: HomePage(),
       ),
