@@ -5,7 +5,7 @@ import 'package:workout_app/data/workout_data.dart';
 import 'workout_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
 
-  Provider.of<WorkoutData>(context, listen: false).initializeWorkoutList();
+    Provider.of<WorkoutData>(context, listen: false).initializeWorkoutList();
   }
 
   // text controller
