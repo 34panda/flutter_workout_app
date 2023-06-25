@@ -53,7 +53,7 @@ class HiveDatabase {
   List<Workout> readFromDatabase() {
     List<Workout> mySavedWorkouts = [];
 
-    List<String> workoutNames = _myBox.get("WORKOUTS");
+    var workoutNames = _myBox.get("WORKOUTS");  // #####################################################################
     final exerciseDetails = _myBox.get("EXERCISES");
 
     // create workout objects

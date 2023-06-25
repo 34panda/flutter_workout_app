@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:workout_app/datetime/date_time.dart';
 import 'package:workout_app/models/exercise.dart';
 
 import '../models/workout.dart';
@@ -17,23 +18,11 @@ class WorkoutData extends ChangeNotifier {
   List<Workout> workoutList = [
     // default workout
     Workout(name: "Push", exercises: [
-      Exercise(
-        name: "Bench Press", 
-        weight: "50", 
-        reps: "12", 
-        sets: "4"
-        )
-      ]
-    ),
+      Exercise(name: "Bench Press", weight: "50", reps: "12", sets: "4")
+    ]),
     Workout(name: "Pull", exercises: [
-      Exercise(
-        name: "Pull Up", 
-        weight: "0", 
-        reps: "4", 
-        sets: "4"
-        )
-      ]
-    )
+      Exercise(name: "Pull Up", weight: "0", reps: "4", sets: "4")
+    ])
   ];
 
   // if there are workouts already in database, then get the workout list, otherwise use default workouts
@@ -56,7 +45,7 @@ class WorkoutData extends ChangeNotifier {
 
     return relevantWorkout.exercises.length;
   }
-  
+
   // add workout
   void addWorkout(String name) {
     // add a new workout with a blank list of exercises
@@ -76,13 +65,13 @@ class WorkoutData extends ChangeNotifier {
 
     relevantWorkout.exercises.add(
       Exercise(
-        name: exerciseName, 
-        weight: weight, 
-        reps: reps, 
+        name: exerciseName,
+        weight: weight,
+        reps: reps,
         sets: sets,
       ),
     );
-    
+
     notifyListeners();
 
     // save to database
@@ -97,9 +86,9 @@ class WorkoutData extends ChangeNotifier {
     // check off boolean to show user compled the exercise
     relevantExercise.isCompleted = !relevantExercise.isCompleted;
     print('tapped');
-    
+
     notifyListeners();
-    
+
     // save to database
     db.saveToDatabase(workoutList);
   }
@@ -116,12 +105,56 @@ class WorkoutData extends ChangeNotifier {
   Exercise getRelevantExercise(String workoutName, String exerciseName) {
     // find the relevant workout first
     Workout relevantWorkout = getRelevantWorkout(workoutName);
-    
+
     // then find the relevant exercise in that workout
     Exercise relevantExercise = relevantWorkout.exercises
-    .firstWhere((exercise) => exercise.name == exerciseName);
+        .firstWhere((exercise) => exercise.name == exerciseName);
 
     return relevantExercise;
   }
 
+  // get start date
+  String getStartDate() {
+    return db.getStartDate();
+  }
+
+  /*
+
+  HEAT MAP
+
+  */
+
+  Map<DateTime, int> heatMapDataSet = {};
+
+  void loadHeatMap() {
+    DateTime startDate = createDateTimeObject(getStartDate());
+
+    // count the number of days to load
+    int daysInBetween = DateTime.now().difference(startDate).inDays;
+
+    // go from start date to today, and each completion ststus to the dataset
+    //"COMPLETION_STATUS_ddmmyyyy" will be the key in the database
+    for (int i = 0; i < daysInBetween + 1; i++) {
+      String ddmmyyyy =
+          convertDateTimeToDDMMYYYY(startDate.add(Duration(days: i)));
+      // completion ststus = 0 or 1
+      int completionStatus = db.getCompletionStatus(ddmmyyyy);
+
+      // year
+      int year = startDate.add(Duration(days: i)).year;
+
+      // month
+      int month = startDate.add(Duration(days: i)).month;
+
+      // day
+      int day = startDate.add(Duration(days: i)).day;
+
+      final percentForEachDay = <DateTime, int>{
+        DateTime(day, month, year): completionStatus
+      };
+
+      // add to the heat map dataset
+      heatMapDataSet.addEntries(percentForEachDay.entries);
+    }
+  }
 }

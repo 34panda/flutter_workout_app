@@ -12,6 +12,7 @@ dependencies:
   provider:
   hive: ^2.2.3  # storing user input data by hive
   hive_flutter: ^1.1.0  # storing user input data by hive
+  flutter_heatmap_calendar: ^1.0.5
 
 dev_dependencies:
   flutter_test:
