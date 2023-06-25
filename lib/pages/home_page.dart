@@ -88,6 +88,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Consumer<WorkoutData>(
       builder: (context, value, child) => Scaffold(
+        backgroundColor: Colors.grey[400],
           appBar: AppBar(
             title: const Text("Workout tracker"),
           ),
