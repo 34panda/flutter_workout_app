@@ -1,7 +1,7 @@
 import 'exercise.dart';
 
 class Workout {
-  final String name;
+String name;
   final List<Exercise> exercises;
 
 

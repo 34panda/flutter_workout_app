@@ -5,24 +5,21 @@ import 'package:workout_app/data/workout_data.dart';
 import 'workout_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  final newWorkoutNameController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
-
     Provider.of<WorkoutData>(context, listen: false).initializeWorkoutList();
   }
 
-  // text controller
-  final newWorkoutNameController = TextEditingController();
-
-  // create a new workout
   void createNewWorkout() {
     showDialog(
       context: context,
@@ -30,15 +27,15 @@ class _HomePageState extends State<HomePage> {
         title: const Text("Create new workout"),
         content: TextField(
           controller: newWorkoutNameController,
+          decoration: const InputDecoration(
+            hintText: 'Workout name',
+          ),
         ),
         actions: [
-          // save button
           MaterialButton(
             onPressed: save,
             child: const Text('save'),
           ),
-
-          // cancel button
           MaterialButton(
             onPressed: cancel,
             child: const Text('cancel'),
@@ -48,27 +45,55 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
- void areYouSureToRemove(String workoutName) {
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text("Are you sure to remove workout?",),
-      actions: [
-        // remove button
-        MaterialButton(
-          onPressed: () => remove(workoutName), // Fix: Provide a callback function
-          child: const Text('remove'),
+  // Edit workout name dialog
+  void editWorkoutName(String workoutName) {
+    newWorkoutNameController.text = workoutName; // Set the previous name as the default input
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("New workout name:"),
+        content: TextField(
+          controller: newWorkoutNameController,
+          decoration: const InputDecoration(
+            hintText: 'Workout name',
+          ),
         ),
+        actions: [
+          MaterialButton(
+            onPressed: () => change(workoutName),
+            child: const Text('save'),
+          ),
+          MaterialButton(
+            onPressed: cancel,
+            child: const Text('cancel'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Confirm workout removal dialog
+  void areYouSureToRemove(String workoutName) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Are you sure to remove workout?"),
+        actions: [
+        // remove button
+          MaterialButton(
+            onPressed: () => remove(workoutName),
+            child: const Text('remove'),
+          ),
 
         // cancel button
-        MaterialButton(
-          onPressed: cancel,
-          child: const Text('cancel'),
-        ),
-      ],
-    ),
-  );
-}
+          MaterialButton(
+            onPressed: cancel,
+            child: const Text('cancel'),
+          ),
+        ],
+      ),
+    );
+  }
 
 
   // go to workout page
@@ -85,18 +110,25 @@ class _HomePageState extends State<HomePage> {
 
   // remove workout
   void remove(String workoutName) {
-     Provider.of<WorkoutData>(context, listen: false).removeWorkout(workoutName);
-     Navigator.pop(context);
+    Provider.of<WorkoutData>(context, listen: false).removeWorkout(workoutName);
+    Navigator.pop(context);
   }
 
   // save workout
   void save() {
     // get workout name from text controller
     String newWorkoutName = newWorkoutNameController.text;
-    // add workout to workdata list
     Provider.of<WorkoutData>(context, listen: false).addWorkout(newWorkoutName);
+    Navigator.pop(context);
+  }
 
-    //pop dialog box
+  // Change workout name
+  void change(String workoutName) {
+    String newWorkoutName = newWorkoutNameController.text;
+    Provider.of<WorkoutData>(context, listen: false).changeWorkoutName(
+      workoutName,
+      newWorkoutName,
+    );
     Navigator.pop(context);
   }
 
@@ -107,7 +139,7 @@ class _HomePageState extends State<HomePage> {
     clear();
   }
 
-  // clear controller
+  // Clear text field
   void clear() {
     newWorkoutNameController.clear();
   }
@@ -126,24 +158,54 @@ class _HomePageState extends State<HomePage> {
           onPressed: createNewWorkout,
           child: const Icon(Icons.add_sharp),
         ),
-        body: ListView.builder(
-          itemCount: value.getWorkoutlist().length,
-          itemBuilder: (context, index) => ListTile(
-            textColor: Colors.grey[300],
-            title: Text(value.getWorkoutlist()[index].name),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.delete, color: Colors.grey[400],),
-                  onPressed: () => areYouSureToRemove(value.getWorkoutlist()[index].name)// Call removeWorkout method
+        body: Container(
+          color: Colors.grey[700],
+          padding: const EdgeInsets.all(8.0),
+          child: ListView.builder(
+            itemCount: value.getWorkoutlist().length,
+            itemBuilder: (context, index) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Container(
+                color: Colors.grey[800],
+                child: ListTile(
+                  title: Text(
+                    value.getWorkoutlist()[index].name,
+                    style: TextStyle(
+                      color: Colors.grey[300],
+                      fontWeight: FontWeight.bold, // Set font weight to bold
+                    ),
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(right: 24.0),
+                        child: IconButton(
+                          icon: Icon(Icons.delete, color: Colors.grey[400]),
+                          onPressed: () => areYouSureToRemove(
+                            value.getWorkoutlist()[index].name,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(right: 24.0),
+                        child: IconButton(
+                          icon: Icon(Icons.border_color, color: Colors.grey[400]),
+                          onPressed: () => editWorkoutName(
+                            value.getWorkoutlist()[index].name,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.arrow_forward_ios, color: Colors.grey[400]),
+                        onPressed: () => goToWorkoutPage(
+                          value.getWorkoutlist()[index].name,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                IconButton(
-                  icon: Icon(Icons.arrow_forward_ios, color: Colors.grey[300],),
-                  onPressed: () =>
-                      goToWorkoutPage(value.getWorkoutlist()[index].name),
-                ),
-              ],
+              ),
             ),
           ),
         ),
