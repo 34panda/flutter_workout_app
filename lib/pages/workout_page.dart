@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:workout_app/components/exercise_tile.dart';
-
 import '../data/workout_data.dart';
 
 class WorkoutPage extends StatefulWidget {
@@ -25,52 +23,65 @@ class _WorkoutPageState extends State<WorkoutPage> {
   final repsController = TextEditingController();
   final setsController = TextEditingController();
 
-  // create a new exercise
-  void createNewExercise() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add a new exercise'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // exercise name
-            TextField(
-              controller: exerciseNameController,
+ // create a new exercise
+void createNewExercise() {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Add a new exercise'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // exercise name
+          TextField(
+            controller: exerciseNameController,
+            decoration: const InputDecoration(
+              hintText: 'Exercise Name',
             ),
-
-            // weight
-            TextField(
-              controller: weightController,
-            ),
-
-            // reps
-            TextField(
-              controller: repsController,
-            ),
-
-            // sets
-            TextField(
-              controller: setsController,
-            ),
-          ],
-        ),
-        actions: [
-          // save button
-          MaterialButton(
-            onPressed: save,
-            child: const Text('Save'),
           ),
 
-          // cancel button
-          MaterialButton(
-            onPressed: cancel,
-            child: const Text('Cancel'),
+          // weight
+          TextField(
+            controller: weightController,
+            decoration: const InputDecoration(
+              hintText: 'Weight',
+            ),
+          ),
+
+          // reps
+          TextField(
+            controller: repsController,
+            decoration: const InputDecoration(
+              hintText: 'Reps',
+            ),
+          ),
+
+          // sets
+          TextField(
+            controller: setsController,
+            decoration: const InputDecoration(
+              hintText: 'Sets',
+            ),
           ),
         ],
       ),
-    );
-  }
+      actions: [
+        // save button
+        MaterialButton(
+          onPressed: save,
+          child: const Text('Save'),
+        ),
+
+        // cancel button
+        MaterialButton(
+          onPressed: cancel,
+          child: const Text('Cancel'),
+        ),
+      ],
+    ),
+  );
+}
+
 
   // save workout
   void save() {
@@ -158,62 +169,71 @@ class _WorkoutPageState extends State<WorkoutPage> {
           itemBuilder: (context, index) {
             final exercise =
                 value.getRelevantWorkout(widget.workoutName).exercises[index];
+            bool isChecked = exercise.isCompleted;
+
             return Card(
               elevation: 2,
-              margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              color: Color(0xFF2D2D2D), // Dark gray color
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              color: isChecked ? Colors.green[700] : const Color(0xFF2D2D2D),
               child: ListTile(
-                contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                 leading: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.delete),
-                      color: Colors.white, // White color for delete button
+                      icon: Icon(
+                        Icons.delete,
+                        color: isChecked ? Colors.white : Colors.grey[300],
+                      ),
                       onPressed: () {
-                        // Remove the exercise here
                         areYouSureToRemoveExercise(
                             widget.workoutName, exercise.name);
                       },
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Container(
-                      padding: EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        color: Colors.grey[
-                            300], // Light gray color for exercise name container
+                        color: isChecked ? Colors.green : Colors.grey[300],
                       ),
                       child: Text(
                         exercise.name,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 16, // Exercise name font size
+                          fontSize: 16,
+                          color: isChecked ? Colors.white : Colors.black,
                         ),
                       ),
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     _buildCircularContainer(
-                        'Weight',
-                        exercise.weight + ' kg',
-                        Color(
-                            0xFF4F4F4F)), // Weight label with normal font size
-                    SizedBox(width: 4),
-                    _buildCircularContainer('Reps', exercise.reps,
-                        Color(0xFF4F4F4F)), // Reps label with normal font size
-                    SizedBox(width: 4),
-                    _buildCircularContainer('Sets', exercise.sets,
-                        Color(0xFF4F4F4F)), // Sets label with normal font size
+                      'Weight',
+                      '${exercise.weight} kg',
+                      isChecked,
+                    ),
+                    const SizedBox(width: 4),
+                    _buildCircularContainer(
+                      'Reps',
+                      exercise.reps,
+                      isChecked,
+                    ),
+                    const SizedBox(width: 4),
+                    _buildCircularContainer(
+                      'Sets',
+                      exercise.sets,
+                      isChecked,
+                    ),
                   ],
                 ),
                 trailing: Checkbox(
-                  value: exercise.isCompleted,
+                  value: isChecked,
                   onChanged: (val) =>
                       onCheckboxChanged(widget.workoutName, exercise.name),
-                  activeColor:
-                      Colors.green, // Set the active (checked) color to green
-                  checkColor:
-                      Colors.white, // Set the color of the check icon to white
+                  activeColor: Colors.green,
+                  checkColor: Colors.white,
+                  fillColor: MaterialStateProperty.resolveWith(
+                      (states) => isChecked ? Colors.green : Colors.grey),
                 ),
               ),
             );
@@ -224,15 +244,22 @@ class _WorkoutPageState extends State<WorkoutPage> {
   }
 
   Widget _buildCircularContainer(
-      String label, String value, Color containerColor) {
+    String label,
+    String value,
+    bool isChecked,
+  ) {
+    Color containerColor =
+        isChecked ? Colors.green : const Color.fromARGB(255, 84, 84, 84);
+    Color textColor = Colors.white;
+
     return Container(
       width: 70,
       height: 50,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: containerColor, // Use the provided container color
+        color: containerColor,
       ),
-      padding: EdgeInsets.symmetric(horizontal: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -240,15 +267,15 @@ class _WorkoutPageState extends State<WorkoutPage> {
             Text(
               label,
               style: TextStyle(
-                color: Colors.white,
+                color: textColor,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 2),
+            const SizedBox(height: 2),
             Text(
               value,
               style: TextStyle(
-                color: Colors.white,
+                color: textColor,
                 fontWeight: FontWeight.bold,
               ),
             ),
