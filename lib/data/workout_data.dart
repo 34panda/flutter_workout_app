@@ -18,11 +18,23 @@ class WorkoutData extends ChangeNotifier {
   List<Workout> workoutList = [
     // default workout
     Workout(name: "Push", exercises: [
-      Exercise(name: "Bench Press", weight: "50", reps: "12", sets: "4")
+      Exercise(name: "Bench Press", weight: "50", reps: "12", sets: "4"),
+      Exercise(name: "Military Press", weight: "30", reps: "12", sets: "4"),
+      Exercise(name: "Chest Flys", weight: "55", reps: "8", sets: "4"),
+      Exercise(name: "Dips", weight: "0", reps: "6", sets: "3"),
     ]),
     Workout(name: "Pull", exercises: [
-      Exercise(name: "Pull Up", weight: "0", reps: "4", sets: "4")
-    ])
+      Exercise(name: "Pull Up", weight: "0", reps: "4", sets: "4"),
+      Exercise(name: "Chin Up", weight: "0", reps: "8", sets: "3"),
+      Exercise(name: "Cable Row", weight: "45", reps: "12", sets: "4"),
+      Exercise(name: "Biceps Curls", weight: "25", reps: "10", sets: "3"),
+    ]),
+    Workout(name: "Legs", exercises: [
+      Exercise(name: "Bulgarian Squats", weight: "12", reps: "6", sets: "4"),
+      Exercise(name: "Split Squats", weight: "30", reps: "8", sets: "4"),
+      Exercise(name: "Abduction", weight: "70", reps: "12", sets: "3"),
+      Exercise(name: "Adduction", weight: "70", reps: "12", sets: "3"),
+    ]),
   ];
 
   // if there are workouts already in database, then get the workout list, otherwise use default workouts
@@ -67,10 +79,22 @@ class WorkoutData extends ChangeNotifier {
 
     notifyListeners();
 
-     // save to database
+    // save to database
     db.saveToDatabase(workoutList);
   }
 
+  // remove an exercise from a workout : maybe put relevant workout instead of workout name into get relevant exercise
+  void removeExercise(String workoutName, String exerciseName) {
+    Workout relevantWorkout = getRelevantWorkout(workoutName);
+    Exercise relevantExercise =
+        getRelevantExercise(relevantWorkout.name, exerciseName);
+    relevantWorkout.exercises.remove(relevantExercise);
+
+    notifyListeners();
+
+    // save to database
+    db.saveToDatabase(workoutList);
+  }
 
   // add an exercise to a workout
   void addExercise(String workoutName, String exerciseName, String weight,
@@ -106,7 +130,7 @@ class WorkoutData extends ChangeNotifier {
 
     // save to database
     db.saveToDatabase(workoutList);
-    
+
     // load the heat map
     loadHeatMap();
   }
