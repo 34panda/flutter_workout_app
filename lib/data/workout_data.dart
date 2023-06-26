@@ -60,6 +60,18 @@ class WorkoutData extends ChangeNotifier {
     db.saveToDatabase(workoutList);
   }
 
+  // remove workout *************************************************************
+  void removeWorkout(String workoutName) {
+    Workout relevantWorkout = getRelevantWorkout(workoutName);
+    workoutList.remove(relevantWorkout);
+
+    notifyListeners();
+
+     // save to database
+    db.saveToDatabase(workoutList);
+  }
+
+
   // add an exercise to a workout
   void addExercise(String workoutName, String exerciseName, String weight,
       String reps, String sets) {

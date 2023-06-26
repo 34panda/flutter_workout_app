@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Create new workout"),
+        title: const Text("Create new workout"),
         content: TextField(
           controller: newWorkoutNameController,
         ),
@@ -35,18 +35,41 @@ class _HomePageState extends State<HomePage> {
           // save button
           MaterialButton(
             onPressed: save,
-            child: Text('save'),
+            child: const Text('save'),
           ),
 
           // cancel button
           MaterialButton(
             onPressed: cancel,
-            child: Text('cancel'),
+            child: const Text('cancel'),
           ),
         ],
       ),
     );
   }
+
+ void areYouSureToRemove(String workoutName) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text("Are you sure to remove workout?"),
+      actions: [
+        // remove button
+        MaterialButton(
+          onPressed: () => remove(workoutName), // Fix: Provide a callback function
+          child: const Text('remove'),
+        ),
+
+        // cancel button
+        MaterialButton(
+          onPressed: cancel,
+          child: const Text('cancel'),
+        ),
+      ],
+    ),
+  );
+}
+
 
   // go to workout page
   void goToWorkoutPage(String workoutName) {
@@ -58,6 +81,12 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  // remove workout
+  void remove(String workoutName) {
+     Provider.of<WorkoutData>(context, listen: false).removeWorkout(workoutName);
+     Navigator.pop(context);
   }
 
   // save workout
@@ -83,12 +112,14 @@ class _HomePageState extends State<HomePage> {
     newWorkoutNameController.clear();
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return Consumer<WorkoutData>(
       builder: (context, value, child) => Scaffold(
+        backgroundColor: Colors.grey[700],
         appBar: AppBar(
           title: const Text("Workout tracker"),
+          backgroundColor: Colors.green[600],
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: createNewWorkout,
@@ -97,11 +128,21 @@ class _HomePageState extends State<HomePage> {
         body: ListView.builder(
           itemCount: value.getWorkoutlist().length,
           itemBuilder: (context, index) => ListTile(
+            textColor: Colors.grey[300],
             title: Text(value.getWorkoutlist()[index].name),
-            trailing: IconButton(
-              icon: Icon(Icons.arrow_forward_ios),
-              onPressed: () => 
-              goToWorkoutPage(value.getWorkoutlist()[index].name),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.delete, color: Colors.grey[300],),
+                  onPressed: () => areYouSureToRemove(value.getWorkoutlist()[index].name)// Call removeWorkout method
+                ),
+                IconButton(
+                  icon: Icon(Icons.arrow_forward_ios, color: Colors.grey[300],),
+                  onPressed: () =>
+                      goToWorkoutPage(value.getWorkoutlist()[index].name),
+                ),
+              ],
             ),
           ),
         ),
