@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage> {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      title: const Text("Are you sure to remove workout?"),
+      title: const Text("Are you sure to remove workout?",),
       actions: [
         // remove button
         MaterialButton(
@@ -116,14 +116,15 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Consumer<WorkoutData>(
       builder: (context, value, child) => Scaffold(
-        backgroundColor: Colors.grey[700],
+        backgroundColor: Colors.grey[800],
         appBar: AppBar(
           title: const Text("Workout tracker"),
           backgroundColor: Colors.green[600],
         ),
         floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.green[600],
           onPressed: createNewWorkout,
-          child: const Icon(Icons.add),
+          child: const Icon(Icons.add_sharp),
         ),
         body: ListView.builder(
           itemCount: value.getWorkoutlist().length,
@@ -134,7 +135,7 @@ class _HomePageState extends State<HomePage> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  icon: Icon(Icons.delete, color: Colors.grey[300],),
+                  icon: Icon(Icons.delete, color: Colors.grey[400],),
                   onPressed: () => areYouSureToRemove(value.getWorkoutlist()[index].name)// Call removeWorkout method
                 ),
                 IconButton(
