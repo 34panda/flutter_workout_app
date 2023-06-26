@@ -166,7 +166,7 @@ class _HomePageState extends State<HomePage> {
             itemBuilder: (context, index) => Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Container(
-                color: Colors.grey[800],
+                color: Colors.grey[600],
                 child: ListTile(
                   title: Text(
                     value.getWorkoutlist()[index].name,
