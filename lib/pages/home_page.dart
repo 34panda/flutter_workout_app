@@ -179,7 +179,7 @@ class _HomePageState extends State<HomePage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        margin: const EdgeInsets.only(right: 24.0),
+                        margin: const EdgeInsets.only(right: 0),
                         child: IconButton(
                           icon: Icon(Icons.delete, color: Colors.grey[400]),
                           onPressed: () => areYouSureToRemove(
@@ -188,7 +188,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                       Container(
-                        margin: const EdgeInsets.only(right: 24.0),
+                        margin: const EdgeInsets.only(right: 10.0),
                         child: IconButton(
                           icon: Icon(Icons.border_color, color: Colors.grey[400]),
                           onPressed: () => editWorkoutName(
