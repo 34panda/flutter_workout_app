@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../data/workout_data.dart';
+import '../models/exercise.dart';
 
 class WorkoutPage extends StatefulWidget {
   final String workoutName;
@@ -11,87 +12,160 @@ class WorkoutPage extends StatefulWidget {
 }
 
 class _WorkoutPageState extends State<WorkoutPage> {
-  // checkbox was tapped
+  // Checkbox was tapped
   void onCheckboxChanged(String workoutName, String exerciseName) {
     Provider.of<WorkoutData>(context, listen: false)
         .checkOffExercise(workoutName, exerciseName);
   }
 
-  // text controllers
+  // Text controllers
   final exerciseNameController = TextEditingController();
   final weightController = TextEditingController();
   final repsController = TextEditingController();
   final setsController = TextEditingController();
 
- // create a new exercise
-void createNewExercise() {
-  showDialog(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: const Text('Add a new exercise'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // exercise name
-          TextField(
-            controller: exerciseNameController,
-            decoration: const InputDecoration(
-              hintText: 'Exercise Name',
+  // Create a new exercise
+  void createNewExercise() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add a new exercise'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Exercise name
+            TextField(
+              controller: exerciseNameController,
+              decoration: const InputDecoration(
+                hintText: 'Exercise Name',
+              ),
             ),
+
+            // Weight
+            TextField(
+              controller: weightController,
+              decoration: const InputDecoration(
+                hintText: 'Weight',
+              ),
+            ),
+
+            // Reps
+            TextField(
+              controller: repsController,
+              decoration: const InputDecoration(
+                hintText: 'Reps',
+              ),
+            ),
+
+            // Sets
+            TextField(
+              controller: setsController,
+              decoration: const InputDecoration(
+                hintText: 'Sets',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          // Save button
+          MaterialButton(
+            onPressed: save,
+            child: const Text('Save'),
           ),
 
-          // weight
-          TextField(
-            controller: weightController,
-            decoration: const InputDecoration(
-              hintText: 'Weight',
-            ),
-          ),
-
-          // reps
-          TextField(
-            controller: repsController,
-            decoration: const InputDecoration(
-              hintText: 'Reps',
-            ),
-          ),
-
-          // sets
-          TextField(
-            controller: setsController,
-            decoration: const InputDecoration(
-              hintText: 'Sets',
-            ),
+          // Cancel button
+          MaterialButton(
+            onPressed: cancel,
+            child: const Text('Cancel'),
           ),
         ],
       ),
-      actions: [
-        // save button
-        MaterialButton(
-          onPressed: save,
-          child: const Text('Save'),
+    );
+  }
+
+  // Edit exercise info
+  void editExerciseInfo(String workoutName, String exerciseName) {
+    Exercise exercise = Provider.of<WorkoutData>(context, listen: false)
+        .getRelevantExercise(workoutName, exerciseName);
+
+    exerciseNameController.text = exercise.name;
+    weightController.text = exercise.weight;
+    repsController.text = exercise.reps;
+    setsController.text = exercise.sets;
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Input changes:'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Exercise name
+            TextField(
+              controller: exerciseNameController,
+              decoration: const InputDecoration(
+                hintText: 'Exercise Name',
+              ),
+            ),
+
+            // Weight
+            TextField(
+              controller: weightController,
+              decoration: const InputDecoration(
+                hintText: 'Weight',
+              ),
+            ),
+
+            // Reps
+            TextField(
+              controller: repsController,
+              decoration: const InputDecoration(
+                hintText: 'Reps',
+              ),
+            ),
+
+            // Sets
+            TextField(
+              controller: setsController,
+              decoration: const InputDecoration(
+                hintText: 'Sets',
+              ),
+            ),
+          ],
         ),
+        actions: [
+          // Save button
+          MaterialButton(
+            onPressed: () => change(
+              workoutName,
+              exerciseName,
+              exerciseNameController.text,
+              weightController.text,
+              repsController.text,
+              setsController.text,
+            ),
+            child: const Text('Save'),
+          ),
 
-        // cancel button
-        MaterialButton(
-          onPressed: cancel,
-          child: const Text('Cancel'),
-        ),
-      ],
-    ),
-  );
-}
+          // Cancel button
+          MaterialButton(
+            onPressed: cancel,
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
+  }
 
-
-  // save workout
+  // Save workout
   void save() {
-    // get exercise name from text controller
+    // Get exercise details from text controllers
     String newExerciseName = exerciseNameController.text;
     String weight = weightController.text;
     String reps = repsController.text;
     String sets = setsController.text;
 
-    // add exercise to workout
+    // Add exercise to workout
     Provider.of<WorkoutData>(context, listen: false).addExercise(
       widget.workoutName,
       newExerciseName,
@@ -100,148 +174,194 @@ void createNewExercise() {
       sets,
     );
 
-    // pop dialog box
+    // Pop dialog box
     Navigator.pop(context);
+    clear();
   }
 
+  // Change exercise info
+  void change(
+    String workoutName,
+    String exerciseName,
+    String newExerciseName,
+    String newWeight,
+    String newReps,
+    String newSets,
+  ) {
+    // Update exercise info in workout
+    Provider.of<WorkoutData>(context, listen: false).changeExerciseInfo(
+      workoutName,
+      exerciseName,
+      newExerciseName,
+      newWeight,
+      newReps,
+      newSets,
+    );
+
+    // Pop dialog box
+    Navigator.pop(context);
+    clear();
+  }
+
+  // Prompt for exercise removal confirmation
   void areYouSureToRemoveExercise(String workoutName, String exerciseName) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text(
-          "Are you sure to remove this exercise?",
-        ),
+        title: const Text("Are you sure you want to remove this exercise?"),
         actions: [
-          // remove button
+          // Remove button
           MaterialButton(
-            onPressed: () => remove(
-                workoutName, exerciseName), // Fix: Provide a callback function
-            child: const Text('remove'),
+            onPressed: () => remove(workoutName, exerciseName),
+            child: const Text('Remove'),
           ),
 
-          // cancel button
+          // Cancel button
           MaterialButton(
             onPressed: cancel,
-            child: const Text('cancel'),
+            child: const Text('Cancel'),
           ),
         ],
       ),
     );
   }
 
-  void remove(String workoutName, exerciseName) {
+  // Remove exercise
+  void remove(String workoutName, String exerciseName) {
     Provider.of<WorkoutData>(context, listen: false)
         .removeExercise(workoutName, exerciseName);
     Navigator.pop(context);
   }
 
-  // cancel
+  // Cancel action
   void cancel() {
-    // pop dialog box
+    // Pop dialog box
     Navigator.pop(context);
     clear();
   }
 
-  // clear controller
+  // Clear text controllers
   void clear() {
     exerciseNameController.clear();
     weightController.clear();
     repsController.clear();
     setsController.clear();
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<WorkoutData>(
-      builder: (context, value, child) => Scaffold(
-        appBar: AppBar(
-          title: Text(widget.workoutName),
-          backgroundColor: Colors.green[600],
-        ),
-        backgroundColor: Colors.grey[800],
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.green[600],
-          onPressed: createNewExercise,
-          child: const Icon(Icons.add_sharp),
-        ),
-        body: ListView.builder(
-          itemCount: value.numberOfExercisesInWorkout(widget.workoutName),
-          itemBuilder: (context, index) {
-            final exercise =
-                value.getRelevantWorkout(widget.workoutName).exercises[index];
-            bool isChecked = exercise.isCompleted;
-
-            return Card(
-              elevation: 2,
-              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              color: isChecked ? Colors.green[700] : const Color(0xFF2D2D2D),
-              child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-                leading: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.delete,
-                        color: isChecked ? Colors.white : Colors.grey[300],
+  
+@override
+Widget build(BuildContext context) {
+  return Consumer<WorkoutData>(
+    builder: (context, value, child) => Scaffold(
+      appBar: AppBar(
+        title: Text(widget.workoutName),
+        backgroundColor: Colors.green[600],
+      ),
+      backgroundColor: Colors.grey[800],
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.green[600],
+        onPressed: createNewExercise,
+        child: const Icon(Icons.add_sharp),
+      ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: value
+                    .getRelevantWorkout(widget.workoutName)
+                    .exercises
+                    .map((exercise) {
+                  bool isChecked = exercise.isCompleted;
+                  return Card(
+                    elevation: 2,
+                    color: isChecked ? Colors.green[700] : const Color(0xFF2D2D2D),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                      leading: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              Icons.delete,
+                              color: isChecked ? Colors.white : Colors.grey[300],
+                            ),
+                            onPressed: () {
+                              areYouSureToRemoveExercise(widget.workoutName, exercise.name);
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              Icons.border_color,
+                              color: isChecked ? Colors.white : Colors.grey[300],
+                            ),
+                            onPressed: () {
+                              editExerciseInfo(widget.workoutName, exercise.name);
+                            },
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: isChecked ? Colors.green : Colors.grey[300],
+                            ),
+                            child: Text(
+                              exercise.name,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: isChecked ? Colors.white : Colors.black,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          _buildCircularContainer(
+                            'Weight',
+                            '${exercise.weight} kg',
+                            isChecked,
+                          ),
+                          const SizedBox(width: 4),
+                          _buildCircularContainer(
+                            'Reps',
+                            exercise.reps,
+                            isChecked,
+                          ),
+                          const SizedBox(width: 4),
+                          _buildCircularContainer(
+                            'Sets',
+                            exercise.sets,
+                            isChecked,
+                          ),
+                        ],
                       ),
-                      onPressed: () {
-                        areYouSureToRemoveExercise(
-                            widget.workoutName, exercise.name);
-                      },
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: isChecked ? Colors.green : Colors.grey[300],
-                      ),
-                      child: Text(
-                        exercise.name,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: isChecked ? Colors.white : Colors.black,
+                      trailing: Checkbox(
+                        value: isChecked,
+                        onChanged: (val) =>
+                            onCheckboxChanged(widget.workoutName, exercise.name),
+                        activeColor: Colors.green,
+                        checkColor: Colors.white,
+                        fillColor: MaterialStateProperty.resolveWith(
+                          (states) => isChecked ? Colors.green : Colors.grey,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    _buildCircularContainer(
-                      'Weight',
-                      '${exercise.weight} kg',
-                      isChecked,
-                    ),
-                    const SizedBox(width: 4),
-                    _buildCircularContainer(
-                      'Reps',
-                      exercise.reps,
-                      isChecked,
-                    ),
-                    const SizedBox(width: 4),
-                    _buildCircularContainer(
-                      'Sets',
-                      exercise.sets,
-                      isChecked,
-                    ),
-                  ],
-                ),
-                trailing: Checkbox(
-                  value: isChecked,
-                  onChanged: (val) =>
-                      onCheckboxChanged(widget.workoutName, exercise.name),
-                  activeColor: Colors.green,
-                  checkColor: Colors.white,
-                  fillColor: MaterialStateProperty.resolveWith(
-                      (states) => isChecked ? Colors.green : Colors.grey),
-                ),
+                  );
+                }).toList(),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
-    );
-  }
+    ),
+  );
+}
+
+
+
+
+
 
   Widget _buildCircularContainer(
     String label,

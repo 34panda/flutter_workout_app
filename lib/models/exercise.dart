@@ -1,8 +1,8 @@
 class Exercise{
-  final String name;
-  final String weight;
-  final String reps;
-  final String sets;
+  String name;
+  String weight;
+  String reps;
+  String sets;
   bool isCompleted;
 
   Exercise({
