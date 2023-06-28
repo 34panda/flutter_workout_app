@@ -12,10 +12,11 @@ Workout App is a mobile application developed using Flutter. It provides a user-
 
 ## Screenshots
 
-<p float="center">
-  <img src="assets/images/img1.png" alt="Screenshot 1" width="40%" />
-  <img src="assets/images/img2.png" alt="Screenshot 2" width="39%" />
-</p>
+<div style="display: flex; justify-content: space-between;">
+  <img src="assets/images/img1.png" alt="Screenshot 1" width="45%" style="float: left;" />
+  <img src="assets/images/img2.png" alt="Screenshot 2" width="44%" style="float: right;" />
+</div>
+
 
 
 ## Origin
