@@ -10,6 +10,10 @@ Workout App is a mobile application developed using Flutter. It provides a user-
 - **Heatmap Calendar**: The app displays a heatmap calendar to visualize workout history. Each day is color-coded based on the intensity of the workout (In development).
 - **User-Friendly Interface**: The app features a clean and intuitive interface, making it easy for users to navigate and track their workouts.
 
+## Screenshots
+
+![Screenshot 1](assets/images/img1.png) ![Screenshot 2](docs/screenshots/img2.png)
+
 ## Origin
 The base for entire app was provided by Mitch Koko's [tutorial](https://www.youtube.com/watch?v=ZWciJzsPyPs&t=9s).
 
@@ -79,6 +83,7 @@ This project is licensed under the [MIT License](LICENSE).
 ## Acknowledgements
 
 - The Flutter framework: [https://flutter.dev/](https://flutter.dev/)
+- Flutter Hive package: [https://pub.dev/packages/hive](https://pub.dev/packages/hive)
 - Flutter Heatmap Calendar package: [https://pub.dev/packages/flutter_heatmap_calendar](https://pub.dev/packages/flutter_heatmap_calendar)
 
 ## Contact
